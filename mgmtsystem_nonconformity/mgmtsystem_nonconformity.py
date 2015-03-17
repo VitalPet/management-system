@@ -158,7 +158,7 @@ class mgmtsystem_nonconformity(base_state, orm.Model):
     """
     _name = "mgmtsystem.nonconformity"
     _description = "Nonconformity of the management system"
-    _rec_name = "description"
+    _rec_name = "name"
     _inherit = ['mail.thread']
     _order = "date desc"
 
@@ -172,6 +172,7 @@ class mgmtsystem_nonconformity(base_state, orm.Model):
         # 1. Description
         'id': fields.integer('ID', readonly=True),
         'ref': fields.char('Reference', size=64, required=True, readonly=True),
+        'name': fields.char('Name', required=True),
         'date': fields.date('Date', required=True),
         'partner_id': fields.many2one('res.partner', 'Partner', required=True),
         'reference': fields.char('Related to', size=50),
@@ -448,8 +449,8 @@ class mgmtsystem_nonconformity(base_state, orm.Model):
         """Change state from in progress to closed"""
         o = self.browse(cr, uid, ids, context=context)[0]
         done_states = ['done', 'cancelled']
-        if (o.immediate_action_id
-                and o.immediate_action_id.state not in done_states):
+        if (o.immediate_action_id and
+                o.immediate_action_id.state not in done_states):
             raise orm.except_orm(
                 _('Error !'),
                 _('Immediate action from analysis has not been closed.')
